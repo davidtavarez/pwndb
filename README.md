@@ -1,5 +1,5 @@
 # pwndb
-Search for creadentials leaked on pwndb 
+Search for leaked creadentials on pwndb using the command line.
 
 ```
                           _ _     
