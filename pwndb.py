@@ -1,97 +1,23 @@
 #!/usr/bin/env python
-import urllib
+#Author:D4Vinci
+import requests, argparse
+################## Configuring tor ##################
+session = requests.session()
+session.proxies = {}
+session.proxies['http'] = 'socks5h://localhost:9050'
+session.proxies['https'] = 'socks5h://localhost:9050'
+url = "http://pwndb2am4tzkvold.onion/"
+#####################################################
+G,B,R,W,M,C,end= '\033[92m','\033[94m','\033[91m','\x1b[37m','\x1b[35m','\x1b[36m','\033[0m'
+good = end+G+"[+]"+C
+bad  = end+R+"["+W+"!"+R+"]"
+parser = argparse.ArgumentParser(prog='tor_passwords.py')
+parser.add_argument("--email", help="Target email to search for leaks.")
+parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
+args    = parser.parse_args()
 
-import socks
-import socket
-
-import sys, getopt
-
-
-def create_connection(address, timeout=None, source_address=None):
-    sock = socks.socksocket()
-    sock.connect(address)
-    return sock
-
-
-socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9150)
-
-socket.socket = socks.socksocket
-socket.create_connection = create_connection
-
-import urllib2
-
-URL = "http://pwndb2am4tzkvold.onion/"
-USER = '[luser] => '
-DOMAIN = '[domain] => '
-PASSWORD = '[password] => '
-
-
-def main(argv):
-    user = '%'
-    domain = '%'
-    try:
-        opts, args = getopt.getopt(argv, "hu:d:", ["username=", "domain="])
-    except getopt.GetoptError:
-        print 'pwndb.py -u <username> -d <domain>'
-        sys.exit(2)
-    if not opts:
-        print 'pwndb.py -u <username> -d <domain>'
-        sys.exit(-1)
-
-    for opt, arg in opts:
-        if opt == '-h':
-            print 'pwndb.py -u <username> -d <domain>'
-            sys.exit(-1)
-        elif opt in ("-u", "--username"):
-            user = "{}{}".format(arg, user)
-        elif opt in ("-d", "--domain"):
-            domain = "{}{}".format(arg, domain)
-
-    print "Searching...\n"
-
-    data = {'luser': "{}".format(user),
-            'domain': "{}".format(domain),
-            'luseropr': 1, 'domainopr': 1,
-            'submitform': 'em'}
-
-
-    handler = urllib2.HTTPHandler()
-    opener = urllib2.build_opener(handler)
-    data = urllib.urlencode(data)
-    request = urllib2.Request(URL, data=data)
-    request.add_header("Content-Type", 'application/x-www-form-urlencoded')
-    request.get_method = lambda: "POST"
-
-    try:
-        connection = opener.open(request)
-    except urllib2.HTTPError, e:
-        connection = e
-
-    if connection.code != 200:
-        print "ERROR: Unable to connect."
-        sys.exit(1)
-
-    response = connection.read()
-    results = [i for i in range(len(response)) if response.startswith(USER, i)]
-
-    for position in range(len(results)):
-        init = len(USER) + results[position]
-
-        first_slice = response[init:]
-        username = response[init:init + first_slice.find("\n")]
-        init = first_slice.find(DOMAIN) + len(DOMAIN)
-        second_slice = first_slice[init:]
-        domain = first_slice[init: init + second_slice.find("\n")]
-        init = second_slice.find(PASSWORD) + len(PASSWORD)
-        third_slice = second_slice[init:]
-        password = second_slice[init: init + third_slice.find("\n")]
-
-        print "\t{}@{} : {}".format(username, domain, password)
-
-    print "\nDone."
-
-if __name__ == '__main__':
-    print '''
+def main():
+    print('''
                           _ _     
                          | | |    
   _ ____      ___ __   __| | |__  
@@ -101,5 +27,46 @@ if __name__ == '__main__':
  | |                              
  |_|                              
  
-    '''
-    main(sys.argv[1:])
+    ''')
+    if args.list:
+        try:
+            emails = open(args.list).readlines()
+        except:
+            print("[!] Can't read file "+str(args.list))
+            exit(0)
+        print(good+" Connecting to pwndb service on tor network...")
+        for email in emails:
+            find(email.strip())
+    elif args.email:
+        print(good+" Connecting to pwndb service on tor network...")
+        find(args.email)
+    else:
+        print(bad+" You need to provide a target first!"+end)
+
+def find(email):
+    if "@" in email and "." in email:
+        username = email.split("@")[0]
+        domain = email.split("@")[1]
+        request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
+        try:
+            r = session.post(url,data=request_data)
+            parse(r.text, email)
+        except:
+            print(bad+" Can't connect to service! restart tor service and try again")
+            exit(0)
+            #s = subprocess.call("sudo service tor start", shell=True)
+            #print(good+" Trying to connect again...")
+            #r = session.post(url,data=request_data)
+            #parse(r.text, email)
+
+def parse(text,email):
+    if "Array" not in text:
+        print(bad+" No leaks found for "+end+M+email)
+    else:
+        leaks = text.split("Array")[1:]
+        for leak in leaks:
+            leak_mail = leak.split("[luser] =>")[1].split("[")[0].strip() + "@" + leak.split("[domain] =>")[1].split("[")[0].strip()
+            print(good+" Found "+leak_mail+":"+leak.split("[password] =>")[1].split(")")[0].strip() )
+
+if __name__ == '__main__':
+    main()
