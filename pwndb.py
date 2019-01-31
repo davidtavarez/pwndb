@@ -11,7 +11,7 @@ url = "http://pwndb2am4tzkvold.onion/"
 G,B,R,W,M,C,end= '\033[92m','\033[94m','\033[91m','\x1b[37m','\x1b[35m','\x1b[36m','\033[0m'
 good = end+G+"[+]"+C
 bad  = end+R+"["+W+"!"+R+"]"
-parser = argparse.ArgumentParser(prog='tor_passwords.py')
+parser = argparse.ArgumentParser(prog='pwndb.py')
 parser.add_argument("--email", help="Target email to search for leaks.")
 parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
 args    = parser.parse_args()
