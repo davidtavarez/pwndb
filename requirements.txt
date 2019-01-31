@@ -1,1 +1,2 @@
 PySocks==1.6.8
+requests==2.19.1
