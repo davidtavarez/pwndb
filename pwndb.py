@@ -2,35 +2,35 @@
 # Authors:
 # - davidtavarez
 # - D4Vinci
-import requests, argparse
+import requests
+import argparse
 
 session = requests.session()
-session.proxies = {}
-session.proxies['http'] = 'socks5h://localhost:9050'
-session.proxies['https'] = 'socks5h://localhost:9050'
+session.proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
 url = "http://pwndb2am4tzkvold.onion/"
 
-G,B,R,W,M,C,end= '\033[92m','\033[94m','\033[91m','\x1b[37m','\x1b[35m','\x1b[36m','\033[0m'
-info = end+W+"[+]"+W
-bad  = end+R+"["+W+"!"+R+"]"
-good = end+G+"[+]"+C
-bad  = end+R+"["+W+"!"+R+"]"
+G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
+info = end + W + "[+]" + W
+good = end + G + "[+]" + C
+bad = end + R + "[" + W + "!" + R + "]"
+
 
 def main(args):
     if args.list:
         try:
             emails = open(args.list).readlines()
+            print(info + " Connecting to pwndb service on tor network...")
+            for email in emails:
+                find(email.strip())
         except:
-            print("[!] Can't read file "+str(args.list))
+            print("[!] Can't read file " + str(args.list))
             exit(0)
-        print(info + " Connecting to pwndb service on tor network...")
-        for email in emails:
-            find(email.strip())
     elif args.email:
         print(info + " Connecting to pwndb service on tor network...")
         find(args.email)
     else:
-        print(bad+" You need to provide a target first!"+end)
+        print(bad + " You need to provide a target first!" + end)
+
 
 def find(email):
     username = email
@@ -40,20 +40,52 @@ def find(email):
         domain = email.split("@")[1]
     request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
     try:
-        r = session.post(url,data=request_data)
-        parse(r.text, email)
+        r = session.post(url, data=request_data)
+        results = parse(r.text)
+        if not results:
+            print(bad + " No leaks found for " + end + M + email)
+            exit(0)
+        for result in results:
+            username = result.get('username', '')
+            domain = result.get('domain', '')
+            password = result.get('password', '')
+            where = result.get('where', ' ')
+            print(good + " Found " + username + "@" + domain + ":" + password + " " + where)
     except:
-        print(bad+" Can't connect to service! restart tor service and try again")
+        print(bad + " Can't connect to service! restart tor service and try again")
         exit(0)
-        
-def parse(text,email):
+
+
+def parse(text):
     if "Array" not in text:
-        print(bad+" No leaks found for "+end+M+email)
-    else:
-        leaks = text.split("Array")[1:]
-        for leak in leaks:
-            leak_mail = leak.split("[luser] =>")[1].split("[")[0].strip() + "@" + leak.split("[domain] =>")[1].split("[")[0].strip()
-            print(good+" Found "+leak_mail+":"+leak.split("[password] =>")[1].split(")")[0].strip() )
+        return None
+
+    leaks = text.split("Array")[1:]
+    emails = []
+    locations = {}
+    for leak in leaks:
+        leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
+        domain = leak.split("[domain] =>")[1].split("[")[0].strip()
+        password = leak.split("[password] =>")[1].split(")")[0].strip()
+
+        email = "{}@{}".format(leaked_email, domain)
+        where = locations.get(email, None)
+        if not where:
+            where = "({})".format(verify_on_leakz(email))
+            locations[email] = where
+
+        emails.append({'username': leaked_email, 'domain': domain, 'password': password, 'where': where})
+    return emails
+
+
+def verify_on_leakz(email):
+    try:
+        url_api = "https://lea.kz/api/mail/{}".format(str(email))
+        return session.get(url_api).json().get('leaked', '-')
+    except:
+        pass
+    return ""
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='pwndb.py')
