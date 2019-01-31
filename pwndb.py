@@ -35,7 +35,6 @@ def main(args):
 def find(email):
     username = email
     domain = "%"
-    print username
     if "@" in email:
         username = email.split("@")[0]
         domain = email.split("@")[1]
