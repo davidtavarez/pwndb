@@ -37,3 +37,13 @@ optional arguments:
 [+] Connecting to pwndb service on tor network...
 [+] Found THEREALDONALDTRUMP@HOTMAIL.COM:sergio22
 ````
+
+## Using domain
+
+```
+(venv) > $ python pwndb.py --email @dominio.com.do
+[+] Connecting to pwndb service on tor network...
+[+] Found xxxx@dominio.com.do:ZZzzz
+[+] Found xxxx@dominio.com.do:ZZzzz
+[+] Found xxxx@dominio.com.do:ZZzzz
+````
