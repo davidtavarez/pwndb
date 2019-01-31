@@ -10,7 +10,7 @@ session.proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://local
 url = "http://pwndb2am4tzkvold.onion/"
 
 G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
-info = end + W + "[+]" + W
+info = end + W + "[-]" + W
 good = end + G + "[+]" + C
 bad = end + R + "[" + W + "!" + R + "]"
 
@@ -19,14 +19,14 @@ def main(args):
     if args.list:
         try:
             emails = open(args.list).readlines()
-            print(info + " Connecting to pwndb service on tor network...")
+            print(info + " Connecting to pwndb service on tor network...\n")
             for email in emails:
                 find(email.strip())
         except:
             print("[!] Can't read file " + str(args.list))
             exit(0)
     elif args.email:
-        print(info + " Connecting to pwndb service on tor network...")
+        print(info + " Connecting to pwndb service on tor network...\n")
         find(args.email)
     else:
         print(bad + " You need to provide a target first!" + end)
@@ -44,14 +44,15 @@ def find(email):
         results = parse(r.text)
         if not results:
             print(bad + " No leaks found for " + end + M + email)
-            exit(0)
+            import sys
+            sys.exit()
         for result in results:
             username = result.get('username', '')
             domain = result.get('domain', '')
             password = result.get('password', '')
             where = result.get('where', ' ')
-            print(good + " Found " + username + "@" + domain + ":" + password + " " + where)
-    except:
+            print(good + "  " + username + "@" + domain + ":" + password + " " + W + where)
+    except Exception, e:
         print(bad + " Can't connect to service! restart tor service and try again")
         exit(0)
 
@@ -63,6 +64,7 @@ def parse(text):
     leaks = text.split("Array")[1:]
     emails = []
     locations = {}
+
     for leak in leaks:
         leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
         domain = leak.split("[domain] =>")[1].split("[")[0].strip()
@@ -71,7 +73,7 @@ def parse(text):
         email = "{}@{}".format(leaked_email, domain)
         where = locations.get(email, None)
         if not where:
-            where = "({})".format(verify_on_leakz(email))
+            where = "[{}]".format(verify_on_leakz(email))
             locations[email] = where
 
         emails.append({'username': leaked_email, 'domain': domain, 'password': password, 'where': where})
