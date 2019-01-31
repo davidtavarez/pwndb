@@ -1,9 +1,9 @@
 # pwndb
-Search for leaked creadentials on pwndb using the command line.
+Search for leaked creadentials on pwndb using the command line and tor.
 
 ## Usage:
 ```
-usage: tor_passwords.py [-h] [--email EMAIL] [--list LIST]
+usage: pwndb.py [-h] [--email EMAIL] [--list LIST]
 
 optional arguments:
   -h, --help     show this help message and exit
