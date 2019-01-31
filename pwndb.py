@@ -35,9 +35,12 @@ def main(args):
 def find(email):
     username = email
     domain = "%"
-    if "@" in email and "." in email:
+    print username
+    if "@" in email:
         username = email.split("@")[0]
         domain = email.split("@")[1]
+        if not username:
+            username = '%'
     request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
     try:
         r = session.post(url, data=request_data)
