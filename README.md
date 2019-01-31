@@ -13,6 +13,27 @@ optional arguments:
 
 > Note: Of course,tor service must be up and running to connect to it on port 9050
 
-## Tutorial (old)
+## Using full email
 
-Go to [https://davidtavarez.github.io/osint/2019/01/25/pwndb-command-line-tool-python.html](https://davidtavarez.github.io/osint/2019/01/25/pwndb-command-line-tool-python.html)
+```
+(venv) > $ python pwndb.py --email info@fbi.gov
+[+] Connecting to pwndb service on tor network...
+[+] Found info@FBI.gov:fbi666
+[+] Found info@fbi.gov:fbi666
+````
+
+## Using wildcard
+
+```
+(venv) > $ python pwndb.py --email therealdonald%
+[+] Connecting to pwndb service on tor network...
+[+] Found therealdonald99@gmail.com:bleed1
+[+] Found THEREALDONALDTRUMP@HOTMAIL.COM:sergio22
+````
+## Using without domain
+
+```
+(venv) > $ python pwndb.py --email therealdonaldtrump
+[+] Connecting to pwndb service on tor network...
+[+] Found THEREALDONALDTRUMP@HOTMAIL.COM:sergio22
+````
