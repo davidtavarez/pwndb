@@ -54,7 +54,7 @@ def find(email):
             password = result.get('password', '')
             where = result.get('where', ' ')
             print(good + "  " + username + "@" + domain + ":" + password + " " + W + where)
-    except Exception, e:
+    except Exception as e:
         print(bad + " Can't connect to service! restart tor service and try again")
         exit(0)
 
