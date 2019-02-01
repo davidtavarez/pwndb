@@ -84,11 +84,12 @@ def parse(text):
 
 
 def verify_on_leakz(email):
-    try:
-        url_api = "https://lea.kz/api/mail/{}".format(str(email))
-        return session.get(url_api).json().get('leaked', '-')
-    except:
-        pass
+    # lea.kz is down
+    # try:
+    #    url_api = "https://lea.kz/api/mail/{}".format(str(email))
+    #    return session.get(url_api).json().get('leaked', '-')
+    # except:
+    #    pass
     return ""
 
 
