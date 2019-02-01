@@ -68,6 +68,7 @@ def parse(text):
     locations = {}
 
     for leak in leaks:
+	leak = leak.lower()
         leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
         domain = leak.split("[domain] =>")[1].split("[")[0].strip()
         password = leak.split("[password] =>")[1].split(")")[0].strip()
