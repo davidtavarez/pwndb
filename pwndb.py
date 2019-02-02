@@ -2,8 +2,12 @@
 # Authors:
 # - davidtavarez
 # - D4Vinci
+
 import requests
 import argparse
+from email.utils import getaddresses
+
+from requests import ConnectionError
 
 session = requests.session()
 session.proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
@@ -20,7 +24,7 @@ def main(emails):
     results = []
 
     for email in emails:
-        leaks = find(email.strip())
+        leaks = find_leaks(email.strip())
         if leaks:
             for leak in leaks:
                 results.append(leak)
@@ -33,10 +37,10 @@ def main(emails):
         domain = result.get('domain', '')
         password = result.get('password', '')
 
-        print(good + "\t" + username + "@" + domain + " : " + password )
+        print(good + "\t" + username + "@" + domain + " : " + password)
 
 
-def find(email):
+def find_leaks(email):
     url = "http://pwndb2am4tzkvold.onion/"
     username = email
     domain = "%"
@@ -51,10 +55,10 @@ def find(email):
 
     r = session.post(url, data=request_data)
 
-    return parse(r.text)
+    return parse_pwndb_response(r.text)
 
 
-def parse(text):
+def parse_pwndb_response(text):
     if "Array" not in text:
         return None
 
@@ -83,16 +87,24 @@ if __name__ == '__main__':
         exit(-1)
 
     emails = []
-    emails.append(args.target)
+
+    if args.target:
+        emails.append(args.target)
 
     if args.list:
         try:
-            emails = open(args.list).readlines()
-        except:
+            lines = open(args.list).readlines()
+            for line in lines:
+                for input in line.split(','):
+                    addresses = getaddresses([input])
+                    for address in addresses:
+                        emails.append(addresses[0][1])
+        except Exception as e:
             print(bad + " Can't read the file: " + str(args.list))
             exit(-1)
-
     try:
         main(emails)
+    except ConnectionError:
+        print(bad + " Can't connect to service! restart tor service and try again.")
     except Exception as e:
-        print(bad + " Can't connect to service! restart tor service and try again")
+        print(bad + " " + str(e.message))
