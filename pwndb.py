@@ -7,7 +7,6 @@ import argparse
 
 session = requests.session()
 session.proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
-url = "http://pwndb2am4tzkvold.onion/"
 
 G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
 info = end + W + "[-]" + W
@@ -15,48 +14,44 @@ good = end + G + "[+]" + C
 bad = end + R + "[" + W + "!" + R + "]"
 
 
-def main(args):
-    if args.list:
-        try:
-            emails = open(args.list).readlines()
-            print(info + " Connecting to pwndb service on tor network...\n")
-            for email in emails:
-                find(email.strip())
-        except:
-            print("[!] Can't read file " + str(args.list))
-            exit(0)
-    elif args.email:
-        print(info + " Connecting to pwndb service on tor network...\n")
-        find(args.email)
-    else:
-        print(bad + " You need to provide a target first!" + end)
+def main(emails):
+    print(info + " Searching for leaks...")
+
+    results = []
+
+    for email in emails:
+        leaks = find(email.strip())
+        if leaks:
+            for leak in leaks:
+                results.append(leak)
+
+    if not results:
+        print(bad + " No leaks found." + end)
+
+    for result in results:
+        username = result.get('username', '')
+        domain = result.get('domain', '')
+        password = result.get('password', '')
+
+        print(good + "\t" + username + "@" + domain + " : " + password )
 
 
 def find(email):
+    url = "http://pwndb2am4tzkvold.onion/"
     username = email
     domain = "%"
+
     if "@" in email:
         username = email.split("@")[0]
         domain = email.split("@")[1]
         if not username:
             username = '%'
+
     request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
-    try:
-        r = session.post(url, data=request_data)
-        results = parse(r.text)
-        if not results:
-            print(bad + " No leaks found for " + end + M + email)
-            import sys
-            sys.exit()
-        for result in results:
-            username = result.get('username', '')
-            domain = result.get('domain', '')
-            password = result.get('password', '')
-            where = result.get('where', ' ')
-            print(good + "  " + username + "@" + domain + ":" + password + " " + W + where)
-    except Exception as e:
-        print(bad + " Can't connect to service! restart tor service and try again")
-        exit(0)
+
+    r = session.post(url, data=request_data)
+
+    return parse(r.text)
 
 
 def parse(text):
@@ -78,8 +73,26 @@ def parse(text):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='pwndb.py')
-    parser.add_argument("--email", help="Target email to search for leaks.")
+    parser.add_argument("--target", help="Target email/domain to search for leaks.")
     parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
     args = parser.parse_args()
 
-    main(args)
+    if not args.list and not args.target:
+        print(bad + " Missing parameters!" + end)
+        parser.print_help()
+        exit(-1)
+
+    emails = []
+    emails.append(args.target)
+
+    if args.list:
+        try:
+            emails = open(args.list).readlines()
+        except:
+            print(bad + " Can't read the file: " + str(args.list))
+            exit(-1)
+
+    try:
+        main(emails)
+    except Exception as e:
+        print(bad + " Can't connect to service! restart tor service and try again")
