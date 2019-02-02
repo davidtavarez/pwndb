@@ -65,32 +65,15 @@ def parse(text):
 
     leaks = text.split("Array")[1:]
     emails = []
-    locations = {}
 
     for leak in leaks:
-	leak = leak.lower()
+        leak = leak.lower()
         leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
         domain = leak.split("[domain] =>")[1].split("[")[0].strip()
         password = leak.split("[password] =>")[1].split(")")[0].strip()
 
-        email = "{}@{}".format(leaked_email, domain)
-        where = locations.get(email, None)
-        if not where:
-            where = "[{}]".format(verify_on_leakz(email))
-            locations[email] = where
-
-        emails.append({'username': leaked_email, 'domain': domain, 'password': password, 'where': where})
+        emails.append({'username': leaked_email, 'domain': domain, 'password': password})
     return emails
-
-
-def verify_on_leakz(email):
-    # lea.kz is down
-    # try:
-    #    url_api = "https://lea.kz/api/mail/{}".format(str(email))
-    #    return session.get(url_api).json().get('leaked', '-')
-    # except:
-    #    pass
-    return ""
 
 
 if __name__ == '__main__':
