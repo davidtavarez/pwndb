@@ -37,7 +37,7 @@ def main(emails):
         domain = result.get('domain', '')
         password = result.get('password', '')
 
-        print(good + "\t" + username + "@" + domain + " : " + password)
+        print(good + "\t" + username + "@" + domain + ":" + password)
 
 
 def find_leaks(email):
@@ -66,12 +66,18 @@ def parse_pwndb_response(text):
     emails = []
 
     for leak in leaks:
+        leaked_email = ''
+        domain = ''
+        password = ''
         leak = leak.lower()
-        leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
-        domain = leak.split("[domain] =>")[1].split("[")[0].strip()
-        password = leak.split("[password] =>")[1].split(")")[0].strip()
-
-        emails.append({'username': leaked_email, 'domain': domain, 'password': password})
+        try :
+            leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
+            domain = leak.split("[domain] =>")[1].split("[")[0].strip()
+            password = leak.split("[password] =>")[1].split(")")[0].strip()
+        except:
+            pass
+        if leaked_email:
+            emails.append({'username': leaked_email, 'domain': domain, 'password': password})
     return emails
 
 
@@ -106,5 +112,5 @@ if __name__ == '__main__':
         main(emails)
     except ConnectionError:
         print(bad + " Can't connect to service! restart tor service and try again.")
-    except Exception as e:
-        print(bad + " " + str(e.message))
+    # except Exception as e:
+    #    print(bad + " " + str(e.message))
