@@ -58,3 +58,12 @@ Please make sure to update tests as appropriate.
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)
+
+## Disclaimer
+
+```
+[!] Legal disclaimer: Usage of pwndb.py for attacking targets without
+prior mutual consent is illegal. It is the end user's responsibility
+to obey all applicable local, state and federal laws. Developers assume
+no liability and are not responsible for any misuse or damage caused.
+```
