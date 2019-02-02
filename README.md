@@ -1,5 +1,5 @@
 # pwndb.py
-pwndb.py is a Python command-line for searching leaked credentials using the Onion service with the same name.
+pwndb.py is a Python command-line tool for searching leaked credentials using the Onion service with the same name.
 
 ## Usage
 
