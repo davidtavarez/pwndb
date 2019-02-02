@@ -57,4 +57,4 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-[MIT License](https://choosealicense.com/licenses/mit/)
+[MIT License](https://opensource.org/licenses/MIT)
