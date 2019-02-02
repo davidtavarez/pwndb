@@ -1,49 +1,60 @@
-# pwndb
-Search for leaked creadentials on pwndb using the command line and tor.
+# pwndb.py
+pwndb.py is a Python command-ling for searching leaked credentials using the Onion service with the same name.
 
-## Usage:
+## Usage
+
 ```
-usage: pwndb.py [-h] [--email EMAIL] [--list LIST]
+usage: pwndb.py [-h] [--target TARGET] [--list LIST]
 
 optional arguments:
-  -h, --help     show this help message and exit
-  --email EMAIL  Target email to search for leaks.
-  --list LIST    A list of emails in a file to search for leaks.
+  -h, --help       show this help message and exit
+  --target TARGET  Target email/domain to search for leaks.
+  --list LIST      A list of emails in a file to search for leaks.
 ```
 
-> Note: Of course,tor service must be up and running to connect to it on port 9050
+> Note: tor service must be up and running to connect to it on port 9050
 
-## Using full email
+## Installation
 
-```
-(venv) > $ python pwndb.py --email info@fbi.gov
-[+] Connecting to pwndb service on tor network...
-[+] Found info@FBI.gov:fbi666
-[+] Found info@fbi.gov:fbi666
-````
-
-## Using wildcard
+Just create a virtualenv, install the requirements and make sure Tor is running.
 
 ```
-(venv) > $ python pwndb.py --email therealdonald%
-[+] Connecting to pwndb service on tor network...
-[+] Found therealdonald99@gmail.com:bleed1
-[+] Found THEREALDONALDTRUMP@HOTMAIL.COM:sergio22
-````
-## Using without domain
+$ git clone https://github.com/davidtavarez/pwndb
+Cloning into 'pwndb'...
+remote: Enumerating objects: 10, done.
+remote: Counting objects: 100% (10/10), done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 10 (delta 2), reused 4 (delta 0), pack-reused 0
+Unpacking objects: 100% (10/10), done.
 
+$ cd pwndb
+
+$ virtualenv venv
+New python executable in /Users/davidtavarez/pwndb/venv/bin/python
+Installing setuptools, pip, wheel...done.
+
+$ source venv/bin/activate
+
+(venv) $ pip install -r requirements.txt
+Collecting PySocks==1.6.8 (from -r requirements.txt (line 1))
+...
+
+(venv) $ python pwndb.py -h
+
+usage: pwndb.py [-h] [--target TARGET] [--list LIST]
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --target TARGET  Target email/domain to search for leaks.
+  --list LIST      A list of emails in a file to search for leaks.
 ```
-(venv) > $ python pwndb.py --email therealdonaldtrump
-[+] Connecting to pwndb service on tor network...
-[+] Found THEREALDONALDTRUMP@HOTMAIL.COM:sergio22
-````
 
-## Using domain
+## Contributing
 
-```
-(venv) > $ python pwndb.py --email @dominio.com.do
-[+] Connecting to pwndb service on tor network...
-[+] Found xxxx@dominio.com.do:ZZzzz
-[+] Found xxxx@dominio.com.do:ZZzzz
-[+] Found xxxx@dominio.com.do:ZZzzz
-````
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+## License
+
+[MIT License](https://choosealicense.com/licenses/mit/)
