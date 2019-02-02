@@ -68,16 +68,16 @@ def parse(text):
     locations = {}
 
     for leak in leaks:
-	leak = leak.lower()
-        leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
-        domain = leak.split("[domain] =>")[1].split("[")[0].strip()
-        password = leak.split("[password] =>")[1].split(")")[0].strip()
+        leak = leak.lower()
+    leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
+    domain = leak.split("[domain] =>")[1].split("[")[0].strip()
+    password = leak.split("[password] =>")[1].split(")")[0].strip()
 
-        email = "{}@{}".format(leaked_email, domain)
-        where = locations.get(email, None)
-        if not where:
-            where = "[{}]".format(verify_on_leakz(email))
-            locations[email] = where
+    email = "{}@{}".format(leaked_email, domain)
+    where = locations.get(email, None)
+    if not where:
+        where = "[{}]".format(verify_on_leakz(email))
+        locations[email] = where
 
         emails.append({'username': leaked_email, 'domain': domain, 'password': password, 'where': where})
     return emails
@@ -100,3 +100,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args)
+
