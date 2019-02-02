@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 for input in line.split(','):
                     addresses = getaddresses([input])
                     for address in addresses:
-                        emails.append(addresses[0][1])
+                        emails.append(str(addresses[0][1]).strip())
         except Exception as e:
             print(bad + " Can't read the file: " + str(args.list))
             exit(-1)
