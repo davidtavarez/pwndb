@@ -1,15 +1,17 @@
 # pwndb.py
-pwndb.py is a Python command-line tool for searching leaked credentials using the Onion service with the same name.
+
+pwndb.py is a python command-line tool for searching leaked credentials using the Onion service with the same name.
 
 ## Usage
 
-```
-usage: pwndb.py [-h] [--target TARGET] [--list LIST]
+```bash
+usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT]
 
 optional arguments:
   -h, --help       show this help message and exit
   --target TARGET  Target email/domain to search for leaks.
   --list LIST      A list of emails in a file to search for leaks.
+  --output OUTPUT  Return results as json/txt
 ```
 
 > Note: tor service must be up and running to connect to it on port 9050
@@ -18,7 +20,7 @@ optional arguments:
 
 Just create a virtualenv, install the requirements and make sure Tor is running.
 
-```
+```bash
 $ git clone https://github.com/davidtavarez/pwndb
 Cloning into 'pwndb'...
 remote: Enumerating objects: 10, done.
@@ -41,19 +43,18 @@ Collecting PySocks==1.6.8 (from -r requirements.txt (line 1))
 
 (venv) $ python pwndb.py -h
 
-usage: pwndb.py [-h] [--target TARGET] [--list LIST]
+usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT]
 
 optional arguments:
   -h, --help       show this help message and exit
   --target TARGET  Target email/domain to search for leaks.
   --list LIST      A list of emails in a file to search for leaks.
+  --output OUTPUT  Return results as json/txt
 ```
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+Pull Requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
