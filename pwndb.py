@@ -11,7 +11,6 @@ import json
 from requests import ConnectionError
 
 session = requests.session()
-session.proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
 
 G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
 info = end + W + "[-]" + W
@@ -94,7 +93,12 @@ if __name__ == '__main__':
     parser.add_argument("--target", help="Target email/domain to search for leaks.")
     parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
     parser.add_argument("--output", help="Return results as json/txt")
+    parser.add_argument("--tor", default=9050, type=int, help="Tor running on this port")
     args = parser.parse_args()
+
+    # tor port arg
+    tor_port = args.tor
+    session.proxies = {'http': 'socks5h://localhost:{}'.format(tor_port), 'https': 'socks5h://localhost:{}'.format(tor_port)}
 
     if not args.list and not args.target:
         print(bad + " Missing parameters!" + end)
