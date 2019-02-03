@@ -6,6 +6,7 @@
 import requests
 import argparse
 from email.utils import getaddresses
+import json
 
 from requests import ConnectionError
 
@@ -18,8 +19,9 @@ good = end + G + "[+]" + C
 bad = end + R + "[" + W + "!" + R + "]"
 
 
-def main(emails):
-    print(info + " Searching for leaks...")
+def main(emails, output=None):
+    if not output:
+        print(info + " Searching for leaks...")
 
     results = []
 
@@ -30,15 +32,21 @@ def main(emails):
                 results.append(leak)
 
     if not results:
-        print(bad + " No leaks found." + end)
+        if not output:
+            print(bad + " No leaks found." + end)
 
-    for result in results:
-        username = result.get('username', '')
-        domain = result.get('domain', '')
-        password = result.get('password', '')
+    if not output or output == 'txt':
+        for result in results:
+            username = result.get('username', '')
+            domain = result.get('domain', '')
+            password = result.get('password', '')
 
-        print(good + "\t" + username + "@" + domain + ":" + password)
-
+            if not output:
+                print(good + "\t" + username + "@" + domain + ":" + password)
+            if output == 'txt':
+                print(username + "@" + domain + ":" + password)
+    if output == 'json':
+        print(json.dumps(results))
 
 def find_leaks(email):
     url = "http://pwndb2am4tzkvold.onion/"
@@ -85,6 +93,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='pwndb.py')
     parser.add_argument("--target", help="Target email/domain to search for leaks.")
     parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
+    parser.add_argument("--output", help="Return results as json/txt")
     args = parser.parse_args()
 
     if not args.list and not args.target:
@@ -93,6 +102,13 @@ if __name__ == '__main__':
         exit(-1)
 
     emails = []
+
+    output = None
+    if args.output:
+        if args.output not in ['json', 'txt']:
+            print(bad + " Output should be json or txt" + end)
+            exit(-1)
+        output = args.output
 
     if args.target:
         emails.append(args.target)
@@ -109,8 +125,8 @@ if __name__ == '__main__':
             print(bad + " Can't read the file: " + str(args.list))
             exit(-1)
     try:
-        main(emails)
+        main(emails, output)
     except ConnectionError:
         print(bad + " Can't connect to service! restart tor service and try again.")
-    # except Exception as e:
-    #    print(bad + " " + str(e.message))
+    except Exception as e:
+        print(bad + " " + str(e.message))
