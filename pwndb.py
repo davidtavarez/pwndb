@@ -10,7 +10,6 @@ import json
 
 from requests import ConnectionError
 
-session = requests.session()
 
 G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
 info = end + W + "[-]" + W
@@ -93,12 +92,13 @@ if __name__ == '__main__':
     parser.add_argument("--target", help="Target email/domain to search for leaks.")
     parser.add_argument("--list", help="A list of emails in a file to search for leaks.")
     parser.add_argument("--output", help="Return results as json/txt")
-    parser.add_argument("--tor", default=9050, type=int, help="Tor running on this port")
+    parser.add_argument("--proxy", default='127.0.0.1:9050', type=str, help="Set Tor proxy (default: 127.0.0.1:9050)")
     args = parser.parse_args()
 
-    # tor port arg
-    tor_port = args.tor
-    session.proxies = {'http': 'socks5h://localhost:{}'.format(tor_port), 'https': 'socks5h://localhost:{}'.format(tor_port)}
+    # Tor proxy
+    proxy = args.proxy
+    session = requests.session()
+    session.proxies = {'http': 'socks5h://{}'.format(proxy), 'https': 'socks5h://{}'.format(proxy)}
 
     if not args.list and not args.target:
         print(bad + " Missing parameters!" + end)
@@ -133,4 +133,4 @@ if __name__ == '__main__':
     except ConnectionError:
         print(bad + " Can't connect to service! restart tor service and try again.")
     except Exception as e:
-        print(bad + " " + str(e.message))
+        print(bad + " " + e)
