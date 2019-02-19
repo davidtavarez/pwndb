@@ -14,7 +14,7 @@ optional arguments:
   --output OUTPUT  Return results as json/txt
 ```
 
-> Note: tor service must be up and running to connect to it on port 9050
+> Note: tor service must be up and running to be connected to port 9050
 
 ## Installation
 
@@ -54,7 +54,7 @@ optional arguments:
 
 ## Contributing
 
-Pull Requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull Requests are welcomed. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
