@@ -75,7 +75,6 @@ def parse_pwndb_response(text):
         leaked_email = ''
         domain = ''
         password = ''
-        leak = leak.lower()
         try :
             leaked_email = leak.split("[luser] =>")[1].split("[")[0].strip()
             domain = leak.split("[domain] =>")[1].split("[")[0].strip()
