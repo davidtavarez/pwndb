@@ -3,6 +3,11 @@
 # - davidtavarez
 # - D4Vinci
 
+import codecs
+import sys 
+UTF8Writer = codecs.getwriter('utf8')
+sys.stdout = UTF8Writer(sys.stdout)
+
 import requests
 import argparse
 from email.utils import getaddresses
