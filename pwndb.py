@@ -3,10 +3,7 @@
 # - davidtavarez
 # - D4Vinci
 
-import codecs
 import sys 
-UTF8Writer = codecs.getwriter('utf8')
-sys.stdout = UTF8Writer(sys.stdout)
 
 import requests
 import argparse
@@ -15,6 +12,8 @@ import json
 
 from requests import ConnectionError
 
+if sys.version_info >= (3, 0):
+    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
 
 G, B, R, W, M, C, end = '\033[92m', '\033[94m', '\033[91m', '\x1b[37m', '\x1b[35m', '\x1b[36m', '\033[0m'
 info = end + W + "[-]" + W
