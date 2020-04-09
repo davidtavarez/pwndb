@@ -52,6 +52,7 @@ def main(emails, output=None):
 
 def find_leaks(email):
     url = "http://pwndb2am4tzkvold.onion/"
+    mirror_url = "http://pwndb2am4tzkvold.onion.pet/"
     username = email
     domain = "%"
 
@@ -62,9 +63,10 @@ def find_leaks(email):
             username = '%'
 
     request_data = {'luser': username, 'domain': domain, 'luseropr': 1, 'domainopr': 1, 'submitform': 'em'}
-
-    r = session.post(url, data=request_data)
-
+    try:
+        r = session.post(url, data=request_data)
+    except:
+        r = session.posr(mirror_url, data=request_data)
     return parse_pwndb_response(r.text)
 
 
