@@ -136,4 +136,4 @@ if __name__ == '__main__':
     except ConnectionError:
         print(bad + " Can't connect to service! restart tor service and try again.")
     except Exception as e:
-        print(bad + " " + e)
+        print(bad + " " + str(e))
