@@ -5,13 +5,14 @@ pwndb.py is a python command-line tool for searching leaked credentials using th
 ## Usage
 
 ```bash
-usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT]
+usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT] [--proxy PROXY]
 
 optional arguments:
   -h, --help       show this help message and exit
   --target TARGET  Target email/domain to search for leaks.
   --list LIST      A list of emails in a file to search for leaks.
   --output OUTPUT  Return results as json/txt
+  --proxy PROXY    Set Tor proxy (default: 127.0.0.1:9150)
 ```
 
 > Note: tor service must be up and running to be connected to port 9050
@@ -43,13 +44,14 @@ Collecting PySocks==1.6.8 (from -r requirements.txt (line 1))
 
 (venv) $ python pwndb.py -h
 
-usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT]
+usage: pwndb.py [-h] [--target TARGET] [--list LIST] [--output OUTPUT] [--proxy PROXY]
 
 optional arguments:
   -h, --help       show this help message and exit
   --target TARGET  Target email/domain to search for leaks.
   --list LIST      A list of emails in a file to search for leaks.
   --output OUTPUT  Return results as json/txt
+  --proxy PROXY    Set Tor proxy (default: 127.0.0.1:9150)
 ```
 
 ## Contributing

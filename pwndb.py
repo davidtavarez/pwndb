@@ -134,6 +134,6 @@ if __name__ == '__main__':
     try:
         main(emails, output)
     except ConnectionError:
-        print(bad + " Can't connect to service! restart tor service and try again.")
+        print(bad + " Can't connect to service! Make sure Tor socks proxy is listening on " + proxy)
     except Exception as e:
         print(bad + " " + str(e))
